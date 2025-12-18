@@ -425,7 +425,7 @@ input_datetime:
                as_timestamp(states('input_datetime.inicio_abastecimento_caixa')))
                / 60) | round(0) }}
   mode: single
-
+```
 
 
 
