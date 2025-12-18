@@ -1,0 +1,26 @@
+caixa_agua_litros_anterior:
+  name: Caixa d'água Litros Anterior
+  min: 0
+  max: 10000
+  step: 1
+
+litros_inicio_abastecimento:
+  name: Litros início abastecimento
+  min: 0
+  max: 1000
+  step: 1
+  unit_of_measurement: "L"
+
+litros_fim_abastecimento:
+  name: Litros fim abastecimento
+  min: 0
+  max: 1000
+  step: 1
+  unit_of_measurement: "L"
+
+tempo_abastecimento_caixa:
+  name: Tempo Abastecimento
+  min: 0
+  max: 300
+  step: 1
+  unit_of_measurement: "min"
