@@ -1,0 +1,11 @@
+consumo_caixa_diario:
+  source: sensor.caixa_agua_saida_total
+  cycle: daily
+
+consumo_caixa_mensal:
+  source: sensor.caixa_agua_saida_total
+  cycle: monthly
+
+abastecimento_caixa_mensal:
+  source: sensor.caixa_agua_entrada_total
+  cycle: monthly
