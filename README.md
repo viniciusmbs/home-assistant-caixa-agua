@@ -49,6 +49,179 @@ sensor.nivel_do_tanque_a_liquid_level
       value_template: >
         {% set percentual = states('sensor.nivel_do_tanque_a_liquid_level') | float(0) %}
         {{ (percentual * 5) | round(0) }}
+
+
+# ==============================
+# Sensor de VARIAÇÃO da caixa (CHAVE DO SISTEMA)
+# ==============================
+- platform: template
+  sensors:
+    variacao_caixa_agua_litros:
+      friendly_name: "Variação Caixa d'água"
+      unit_of_measurement: "L"
+      value_template: >
+        {% set atual = states('sensor.caixa_agua_litros') | float(0) %}
+        {% set anterior = states('input_number.caixa_agua_litros_anterior') | float(0) %}
+        {{ (atual - anterior) | round(1) }}
+
+
+# ==============================
+# Água que entrou na caixa
+# ==============================
+- platform: template
+  sensors:
+    caixa_agua_entrou:
+      friendly_name: "Água que entrou na caixa"
+      unit_of_measurement: "L"
+      device_class: water
+      icon_template: mdi:water-plus
+      value_template: >
+        {% set v = states('sensor.variacao_caixa_agua_litros') | float(0) %}
+        {{ v if v > 0 else 0 }}
+
+
+# ==============================
+# Água que saiu da caixa (CONSUMO)
+# ==============================
+- platform: template
+  sensors:
+    caixa_agua_saiu:
+      friendly_name: "Água que saiu da caixa"
+      unit_of_measurement: "L"
+      device_class: water
+      icon_template: mdi:water-minus
+      value_template: >
+        {% set v = states('sensor.variacao_caixa_agua_litros') | float(0) %}
+        {{ (v * -1) if v < 0 else 0 }}
+
+
+# ==============================
+# Consumo acumulado da Caixa (referência)
+# ==============================
+- platform: template
+  sensors:
+    consumo_caixa_litros:
+      friendly_name: "Consumo da Caixa (Total)"
+      unit_of_measurement: "L"
+      device_class: water
+      value_template: >
+        {{ states('sensor.caixa_agua_litros') | float(0) }}
+
+
+# ==============================
+# Custos da Caixa d'água
+# ==============================
+- platform: template
+  sensors:
+    custo_caixa_agua_atual:
+      friendly_name: "Custo Atual da Caixa"
+      unit_of_measurement: "R$"
+      icon_template: mdi:currency-brl
+      value_template: >
+        {{ (states('sensor.caixa_agua_litros') | float(0) * 0.00795) | round(2) }}
+
+    custo_caixa_agua_diario:
+      friendly_name: "Custo Diário da Caixa"
+      unit_of_measurement: "R$"
+      icon_template: mdi:currency-brl
+      value_template: >
+        {{ (states('sensor.consumo_caixa_diario') | float(0) * 0.00795) | round(2) }}
+
+    custo_caixa_agua_mensal:
+      friendly_name: "Custo Mensal da Caixa"
+      unit_of_measurement: "R$"
+      icon_template: mdi:currency-brl
+      value_template: >
+        {{ (states('sensor.consumo_caixa_mensal') | float(0) * 0.00795) | round(2) }}
+
+
+# ==============================
+# Litros do último abastecimento
+# ==============================
+- platform: template
+  sensors:
+    litros_ultimo_abastecimento_caixa:
+      friendly_name: "Litros do Último Abastecimento"
+      unit_of_measurement: "L"
+      icon_template: mdi:water-plus
+      value_template: >
+        {% set ini = states('input_number.litros_inicio_abastecimento') | float(0) %}
+        {% set fim = states('input_number.litros_fim_abastecimento') | float(0) %}
+        {{ (fim - ini) | max(0) | round(0) }}
+
+
+# ==============================
+# Formatação do último abastecimento
+# ==============================
+- platform: template
+  sensors:
+    ultimo_abastecimento_caixa_formatado:
+      friendly_name: "Último Abastecimento Caixa"
+      value_template: >
+        {% set dt = states('input_datetime.ultimo_abastecimento_caixa') %}
+        {% if dt not in ['unknown', 'unavailable', ''] %}
+          {{ strptime(dt, '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%y - %H:%M') }}
+        {% else %}
+          --
+        {% endif %}
+        
+
+# ==============================
+# ACUMULADOR DE ENTRADA
+# ==============================
+- platform: template
+  sensors:
+    caixa_agua_entrada_total:
+      friendly_name: "Entrada Total Caixa"
+      unit_of_measurement: "L"
+      device_class: water
+      value_template: >
+        {% set atual = states('sensor.caixa_agua_litros') | float(0) %}
+        {% set anterior = states('input_number.caixa_agua_litros_anterior') | float(0) %}
+        {% set total = states('sensor.caixa_agua_entrada_total') | float(0) %}
+        {% if atual > anterior %}
+          {{ (total + (atual - anterior)) | round(1) }}
+        {% else %}
+          {{ total | round(1) }}
+        {% endif %}
+
+# ==============================
+# ACUMULADOR DE SAÍDA (CONSUMO)
+# ==============================
+- platform: template
+  sensors:
+    caixa_agua_saida_total:
+      friendly_name: "Saída Total Caixa"
+      unit_of_measurement: "L"
+      device_class: water
+      value_template: >
+        {% set atual = states('sensor.caixa_agua_litros') | float(0) %}
+        {% set anterior = states('input_number.caixa_agua_litros_anterior') | float(0) %}
+        {% set total = states('sensor.caixa_agua_saida_total') | float(0) %}
+        {% if atual < anterior %}
+          {{ (total + (anterior - atual)) | round(1) }}
+        {% else %}
+          {{ total | round(1) }}
+        {% endif %}
+        
+
+#Alera led verde vermelho
+- platform: template
+  sensors:
+    status_caixa_agua:
+      friendly_name: "Status Caixa d'Água"
+      value_template: >
+        {% set nivel = states('sensor.nivel_do_tanque_a_liquid_level') | float(0) %}
+        {% set min = states('number.nivel_do_tanque_a_alarm_minimum') | float(0) %}
+        {% set max = states('number.nivel_do_tanque_a_alarm_maximum') | float(100) %}
+        {% if nivel < min %}
+          baixo
+        {% elif nivel < ((min + max) / 2) %}
+          medio
+        {% else %}
+          ok
+        {% endif %}
+
 ```
 
 **Caixa de 500 L → cada 1% = 5 L**
