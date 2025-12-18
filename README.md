@@ -426,12 +426,12 @@ input_datetime:
                / 60) | round(0) }}
   mode: single
 
-...
 
 
 
 
-## 📦 8️⃣ (Card Buton Pop UpCompleto)
+
+### 📦 8️⃣ (Card Buton Pop UpCompleto)
 
 ```yaml
 type: custom:button-card
