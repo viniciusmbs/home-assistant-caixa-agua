@@ -1,0 +1,39 @@
+# ==============================
+# Caixa d'água - Litros
+# ==============================
+- platform: template
+  sensors:
+    caixa_agua_litros:
+      friendly_name: "Caixa d'água - Litros"
+      unit_of_measurement: "L"
+      device_class: water
+      icon_template: mdi:water
+      value_template: >
+        {% set percentual = states('sensor.nivel_do_tanque_a_liquid_level') | float(0) %}
+        {{ (percentual * 5) | round(0) }}
+
+# ==============================
+# Entrada total de água
+# ==============================
+- platform: template
+  sensors:
+    caixa_agua_entrada_total:
+      friendly_name: "Entrada Total Caixa"
+      unit_of_measurement: "L"
+      device_class: water
+      value_template: >
+        {% set atual = states('sensor.caixa_agua_litros') | float(0) %}
+        {% set anterior = states('input_number.caixa_agua_litros_anterior') | float(0) %}
+        {% if atual > anterior %}
+          {{ (states('sensor.caixa_agua_entrada_total') | float(0)) + (atual - anterior) }}
+        {% else %}
+          {{ states('sensor.caixa_agua_entrada_total') | float(0) }}
+        {% endif %}
+
+# ==============================
+# Saída total de água
+# ==============================
+- platform: template
+  sensors:
+    caixa_agua_saida_total:
+      friendly_name: "Saída Tota_
