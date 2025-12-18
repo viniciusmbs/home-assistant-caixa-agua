@@ -335,7 +335,95 @@ input_datetime:
     has_date: true
     has_time: true
 ```
+## 📦 8️⃣ Inputs (automation.yaml)
+# ==========================================
+# CAIXA D'ÁGUA – CONTROLE COMPLETO
+# ==========================================
 
+# ------------------------------------------
+# 1️⃣ Atualiza litros anteriores (BASE)
+# ------------------------------------------
+- id: caixa_atualizar_litros_anteriores
+  alias: Caixa - Atualizar litros anteriores
+  trigger:
+    - platform: state
+      entity_id: sensor.caixa_agua_litros
+  action:
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.caixa_agua_litros_anterior
+      data:
+        value: "{{ trigger.from_state.state | float(0) }}"
+  mode: single
+
+
+# ------------------------------------------
+# 2️⃣ Detectar INÍCIO do abastecimento
+# (subiu mais de 5 litros)
+# ------------------------------------------
+- id: caixa_inicio_abastecimento
+  alias: Caixa - Início do abastecimento
+  trigger:
+    - platform: state
+      entity_id: sensor.caixa_agua_litros
+  condition:
+    - condition: template
+      value_template: >
+        {{ trigger.from_state is not none and
+           (trigger.to_state.state | float -
+            trigger.from_state.state | float) > 5 }}
+  action:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.inicio_abastecimento_caixa
+      data:
+        timestamp: "{{ now().timestamp() }}"
+
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.litros_inicio_abastecimento
+      data:
+        value: "{{ trigger.from_state.state | float }}"
+  mode: single
+
+
+# ------------------------------------------
+# 3️⃣ Detectar FIM do abastecimento
+# (parou de subir por 5 minutos)
+# ------------------------------------------
+- id: caixa_fim_abastecimento
+  alias: Caixa - Fim do abastecimento
+  trigger:
+    - platform: state
+      entity_id: sensor.caixa_agua_litros
+      for:
+        minutes: 5
+  action:
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.litros_fim_abastecimento
+      data:
+        value: "{{ states('sensor.caixa_agua_litros') | float }}"
+
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.ultimo_abastecimento_caixa
+      data:
+        timestamp: "{{ now().timestamp() }}"
+
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.tempo_abastecimento_caixa
+      data:
+        value: >
+          {{ ((as_timestamp(now()) -
+               as_timestamp(states('input_datetime.inicio_abastecimento_caixa')))
+               / 60) | round(0) }}
+  mode: single
+
+```
+
+```yaml
 ## 📦 8️⃣ (Card Buton Pop UpCompleto)
 
 ```yaml
