@@ -1,0 +1,9 @@
+inicio_abastecimento_caixa:
+  name: Início Abastecimento
+  has_date: true
+  has_time: true
+
+ultimo_abastecimento_caixa:
+  name: Último Abastecimento
+  has_date: true
+  has_time: true
