@@ -335,7 +335,12 @@ input_datetime:
     has_date: true
     has_time: true
 ```
-## 📦 8️⃣ Inputs (automation.yaml)
+
+## 📦 6️⃣ Automações
+
+📄 **automation.yaml**
+
+```yaml
 # ==========================================
 # CAIXA D'ÁGUA – CONTROLE COMPLETO
 # ==========================================
@@ -421,9 +426,11 @@ input_datetime:
                / 60) | round(0) }}
   mode: single
 
-```
+...
 
-```yaml
+
+
+
 ## 📦 8️⃣ (Card Buton Pop UpCompleto)
 
 ```yaml
