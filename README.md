@@ -20,7 +20,10 @@ para controle de nível, abastecimento e histórico da caixa d’água.
 
 ✔ **Maximum liquid depth**  
 0,1 m = 10 cm  
-
+🔎 Observação importante sobre a medição:
+Apesar das medidas físicas estarem em metros/centímetros, a medição final do nível NÃO é feita por altura, e sim por percentual de volume.
+A caixa possui 500 litros (100%), onde 1% equivale a 5 litros. Dessa forma, o valor exibido representa diretamente o volume real em litros, reduzindo erros comuns da medição por altura.
+Exemplo: 91% = 455 litros | 10% = 50 litros | 1% = 5 litros
 
 ## 📦 2️⃣ Sensores Tuya (referência)
 
@@ -50,7 +53,6 @@ sensor.nivel_do_tanque_a_liquid_level
         {% set percentual = states('sensor.nivel_do_tanque_a_liquid_level') | float(0) %}
         {{ (percentual * 5) | round(0) }}
 
-
 # ==============================
 # Sensor de VARIAÇÃO da caixa (CHAVE DO SISTEMA)
 # ==============================
@@ -63,7 +65,6 @@ sensor.nivel_do_tanque_a_liquid_level
         {% set atual = states('sensor.caixa_agua_litros') | float(0) %}
         {% set anterior = states('input_number.caixa_agua_litros_anterior') | float(0) %}
         {{ (atual - anterior) | round(1) }}
-
 
 # ==============================
 # Água que entrou na caixa
@@ -78,7 +79,6 @@ sensor.nivel_do_tanque_a_liquid_level
       value_template: >
         {% set v = states('sensor.variacao_caixa_agua_litros') | float(0) %}
         {{ v if v > 0 else 0 }}
-
 
 # ==============================
 # Água que saiu da caixa (CONSUMO)
@@ -107,7 +107,6 @@ sensor.nivel_do_tanque_a_liquid_level
       value_template: >
         {{ states('sensor.caixa_agua_litros') | float(0) }}
 
-
 # ==============================
 # Custos da Caixa d'água
 # ==============================
@@ -133,7 +132,6 @@ sensor.nivel_do_tanque_a_liquid_level
       icon_template: mdi:currency-brl
       value_template: >
         {{ (states('sensor.consumo_caixa_mensal') | float(0) * 0.00795) | round(2) }}
-
 
 # ==============================
 # Litros do último abastecimento
@@ -165,7 +163,6 @@ sensor.nivel_do_tanque_a_liquid_level
           --
         {% endif %}
         
-
 # ==============================
 # ACUMULADOR DE ENTRADA
 # ==============================
