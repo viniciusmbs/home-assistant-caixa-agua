@@ -224,30 +224,6 @@ sensor.nivel_do_tanque_a_liquid_level
 **Caixa de 500 L → cada 1% = 5 L**
 
 
-## 📦 4️⃣ Sensor ACUMULADOR (ENTRADA)
-
-📄 **sensors.yaml**
-
-```yaml
-# ==============================
-# Entrada total de água na caixa
-# ==============================
-- platform: template
-  sensors:
-    caixa_agua_entrada_total:
-      friendly_name: "Entrada Total Caixa"
-      unit_of_measurement: "L"
-      device_class: water
-      value_template: >
-        {% set atual = states('sensor.caixa_agua_litros') | float(0) %}
-        {% set anterior = states('input_number.caixa_agua_litros_anterior') | float(0) %}
-        {% if atual > anterior %}
-          {{ (states('sensor.caixa_agua_entrada_total') | float(0)) + (atual - anterior) }}
-        {% else %}
-          {{ states('sensor.caixa_agua_entrada_total') | float(0) }}
-        {% endif %}
-```
-
 
 
 
