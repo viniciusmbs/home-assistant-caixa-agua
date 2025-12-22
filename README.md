@@ -249,29 +249,7 @@ sensor.nivel_do_tanque_a_liquid_level
 ```
 
 
-## 📦 5️⃣ Sensor ACUMULADOR (SAÍDA / CONSUMO)
 
-📄 **sensors.yaml**
-
-```yaml
-# ==============================
-# Saída total de água da caixa
-# ==============================
-- platform: template
-  sensors:
-    caixa_agua_saida_total:
-      friendly_name: "Saída Total Caixa"
-      unit_of_measurement: "L"
-      device_class: water
-      value_template: >
-        {% set atual = states('sensor.caixa_agua_litros') | float(0) %}
-        {% set anterior = states('input_number.caixa_agua_litros_anterior') | float(0) %}
-        {% if atual < anterior %}
-          {{ (states('sensor.caixa_agua_saida_total') | float(0)) + (anterior - atual) }}
-        {% else %}
-          {{ states('sensor.caixa_agua_saida_total') | float(0) }}
-        {% endif %}
-```
 
 
 ## 📦 6️⃣ Utility Meter
